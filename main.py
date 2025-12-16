@@ -1,3 +1,5 @@
+from fastapi.responses import StreamingResponse
+from image_generator import generate_badge
 from fastapi import FastAPI
 import uvicorn
 import os
@@ -37,11 +39,9 @@ def get_badge(tech: str, score: int, scale: int):
     if scale < 1 or scale > 20:
         return {"error": "Scale must be a number between 1 and 20"}
 
-    return {
-        "tech": tech,
-        "score": score,
-        "scale": scale
-    }
+    image_data = generate_badge(tech, score, scale)
+
+    return StreamingResponse(image_data, media_type="image/png")
 
 
 def main():
