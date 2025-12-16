@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDEs
+.idea/
+*.iml
+*.iws
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+
+# UV (Python package manager)
+.uv/
+.venv/
