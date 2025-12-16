@@ -14,8 +14,7 @@ def load_techs():
     def get_files(dir_path):
         return [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
 
-    return list(set([remove_ext(f) for f in get_files(techs_dir)]))
-
+    return set([remove_ext(f) for f in get_files(techs_dir)])
 
 techs = load_techs()
 
@@ -26,20 +25,27 @@ def get_techs():
 
 
 @app.get("/badge")
-def get_badge(tech: str, score: int, size: int):
-    print(f"tech: {tech}")
-    print(f"score: {score}")
-    print(f"size: {size}")
+def get_badge(tech: str, score: int, scale: int):
+    tech = tech.strip().lower()
+
+    if tech not in techs:
+        return {"error": "Tech not found"}
+
+    if score < 0 or score > 6:
+        return {"error": "Score must be a number between 0 and 6"}
+
+    if scale < 1 or scale > 20:
+        return {"error": "Scale must be a number between 1 and 20"}
 
     return {
         "tech": tech,
         "score": score,
-        "size": size
+        "scale": scale
     }
 
 
 def main():
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
 
 if __name__ == "__main__":
