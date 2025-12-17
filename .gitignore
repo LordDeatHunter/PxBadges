@@ -16,3 +16,6 @@ __pycache__/
 # UV (Python package manager)
 .uv/
 .venv/
+
+# Env
+.env

@@ -1,11 +1,16 @@
 from fastapi.responses import StreamingResponse
 from image_generator import generate_badge
-from fastapi import FastAPI
+from fastapi import FastAPI, Header, HTTPException
 import uvicorn
+import dotenv
 import os
 
 app = FastAPI()
+dotenv.load_dotenv()
+ADMIN_API_KEY = os.getenv("ADMIN_API_KEY")
 
+
+techs = []
 
 def load_techs():
     techs_dir = "assets/tech"
@@ -16,14 +21,13 @@ def load_techs():
     def get_files(dir_path):
         return [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
 
-    return set([remove_ext(f) for f in get_files(techs_dir)])
-
-techs = load_techs()
+    global techs
+    techs = set([remove_ext(f) for f in get_files(techs_dir)])
 
 
 @app.get("/techs")
 def get_techs():
-    return {"techs": techs}
+    return {"techs": sorted(techs), "count": len(techs)}
 
 
 @app.get("/badge")
@@ -44,7 +48,22 @@ def get_badge(tech: str, score: int, scale: int):
     return StreamingResponse(image_data, media_type="image/png")
 
 
+@app.post("/admin/reload-techs")
+def reload_techs(api_key: str = Header(..., alias="X-API-Key")):
+    if not ADMIN_API_KEY:
+        raise HTTPException(status_code=500, detail="Admin API key not configured")
+    if api_key != ADMIN_API_KEY:
+        raise HTTPException(status_code=403, detail="Invalid API key")
+
+    prev_tech_count = len(techs)
+    load_techs()
+    new_techs = len(techs) - prev_tech_count
+
+    return {"message": "Techs reloaded successfully", "new_techs": new_techs, "techs": sorted(techs)}
+
+
 def main():
+    load_techs()
     uvicorn.run(app, host="127.0.0.1", port=8000)
 
 
