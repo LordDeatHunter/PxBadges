@@ -9,21 +9,30 @@ app = FastAPI()
 dotenv.load_dotenv()
 ADMIN_API_KEY = os.getenv("ADMIN_API_KEY")
 
-
 techs = []
-materials = ["standard", "gold"] # TODO: unhardcode this
+materials = []
+
+
+def get_files(dir_path):
+    return [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
+
+
+def remove_ext(filename):
+    return filename.split('.')[0]
+
 
 def load_techs():
+    global techs
     techs_dir = "assets/tech"
 
-    def remove_ext(filename):
-        return filename.split('.')[0].split('_')[0]
+    techs = set([remove_ext(f).split('_')[0] for f in get_files(techs_dir)])
 
-    def get_files(dir_path):
-        return [f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
 
-    global techs
-    techs = set([remove_ext(f) for f in get_files(techs_dir)])
+def load_materials():
+    global materials
+    materials_dir = "assets/badge"
+
+    materials = set([remove_ext(f) for f in get_files(materials_dir)])
 
 
 @app.get("/techs")
@@ -34,6 +43,7 @@ def get_techs():
 @app.get("/materials")
 def get_materials():
     return {"materials": materials, "count": len(materials)}
+
 
 @app.get("/badge")
 def get_badge(tech: str, score: int, scale: int, material: str = "standard"):
@@ -58,8 +68,8 @@ def get_badge(tech: str, score: int, scale: int, material: str = "standard"):
     return StreamingResponse(image_data, media_type="image/png")
 
 
-@app.post("/admin/reload-techs")
-def reload_techs(api_key: str = Header(..., alias="X-API-Key")):
+@app.post("/admin/reload")
+def reload(api_key: str = Header(..., alias="X-API-Key")):
     if not ADMIN_API_KEY:
         raise HTTPException(status_code=500, detail="Admin API key not configured")
     if api_key != ADMIN_API_KEY:
@@ -69,11 +79,20 @@ def reload_techs(api_key: str = Header(..., alias="X-API-Key")):
     load_techs()
     new_techs = len(techs) - prev_tech_count
 
-    return {"message": "Techs reloaded successfully", "new_techs": new_techs, "techs": sorted(techs)}
+    prev_material_count = len(materials)
+    load_materials()
+    new_materials = len(materials) - prev_material_count
+
+    return {
+        "message": "Reloaded successfully",
+        "new_materials": new_materials,
+        "new_techs": new_techs
+    }
 
 
 def main():
     load_techs()
+    load_materials()
     uvicorn.run(app, host="127.0.0.1", port=8000)
 
 
