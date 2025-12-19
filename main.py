@@ -39,17 +39,19 @@ def get_materials():
 def get_badge(tech: str, score: int, scale: int, material: str = "standard"):
     tech = tech.strip().lower()
 
+    errors = []
+
     if tech not in techs:
-        return {"error": "Invalid tech. Call '/techs' to see valid options."}
-
+        errors.append("Invalid tech. Call '/techs' to see valid options.")
     if score < 0 or score > 6:
-        return {"error": "Score must be a number between 0 and 6"}
-
+        errors.append("Score must be a number between 0 and 6")
     if scale < 1 or scale > 20:
-        return {"error": "Scale must be a number between 1 and 20"}
-
+        errors.append("Scale must be a number between 1 and 20")
     if material not in materials:
-        return {"error": "Invalid material. Call '/materials' to see valid options."}
+        errors.append("Invalid material. Call '/materials' to see valid options.")
+
+    if errors:
+        raise HTTPException(status_code=400, detail=errors)
 
     image_data = generate_badge(tech, score, scale, material)
 
