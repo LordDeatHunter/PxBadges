@@ -4,8 +4,8 @@ from io import BytesIO
 STAR_LOCATIONS = [(7, 46), (19, 47), (31, 46)]
 LOGO_LOCATION = (8, 10)
 
-def generate_badge(tech: str, score: int, scale: int) -> BytesIO:
-    badge = Image.open("assets/badge_1.png").convert("RGBA")
+def generate_badge(tech: str, score: int, scale: int, material: str) -> BytesIO:
+    badge = Image.open(f"assets/badge_{material}.png").convert("RGBA")
     logo = Image.open(f"assets/tech/{tech}.png").convert("RGBA")
     star = Image.open("assets/star.png").convert("RGBA")
     half_star = star.crop((0, 0, star.width // 2, star.height)).convert("RGBA")

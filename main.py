@@ -11,6 +11,7 @@ ADMIN_API_KEY = os.getenv("ADMIN_API_KEY")
 
 
 techs = []
+materials = ["standard", "gold"] # TODO: unhardcode this
 
 def load_techs():
     techs_dir = "assets/tech"
@@ -30,12 +31,16 @@ def get_techs():
     return {"techs": sorted(techs), "count": len(techs)}
 
 
+@app.get("/materials")
+def get_materials():
+    return {"materials": materials, "count": len(materials)}
+
 @app.get("/badge")
-def get_badge(tech: str, score: int, scale: int):
+def get_badge(tech: str, score: int, scale: int, material: str = "standard"):
     tech = tech.strip().lower()
 
     if tech not in techs:
-        return {"error": "Tech not found"}
+        return {"error": "Invalid tech. Call '/techs' to see valid options."}
 
     if score < 0 or score > 6:
         return {"error": "Score must be a number between 0 and 6"}
@@ -43,7 +48,10 @@ def get_badge(tech: str, score: int, scale: int):
     if scale < 1 or scale > 20:
         return {"error": "Scale must be a number between 1 and 20"}
 
-    image_data = generate_badge(tech, score, scale)
+    if material not in materials:
+        return {"error": "Invalid material. Call '/materials' to see valid options."}
+
+    image_data = generate_badge(tech, score, scale, material)
 
     return StreamingResponse(image_data, media_type="image/png")
 
