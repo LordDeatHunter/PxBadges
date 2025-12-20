@@ -1,4 +1,5 @@
 import { API_BASE } from "./config.js";
+import { showNotification } from "./ui.js";
 
 /**
  * Create a badge generation handler
@@ -40,8 +41,19 @@ export const createBadgeGenerator = (elements) => {
       );
     } catch (error) {
       console.error("Error generating badge:", error);
+
+      if (error.validationErrors) {
+        showNotification(error.validationErrors, "error");
+      } else {
+        showNotification(
+          "Unable to generate badge. Please try again later.",
+          "error",
+        );
+      }
+
       previewContainer.innerHTML =
-        '<p class="error">Error generating badge. Please try again.</p>';
+        '<p class="placeholder">Select a technology to generate your badge</p>';
+      urlSection.classList.add("hidden");
     }
   };
 };
@@ -75,6 +87,28 @@ export const generateBadge = async (
     material,
   });
   const badgeUrl = `${API_BASE}/badge?${searchParams}`;
+
+  const response = await fetch(badgeUrl);
+
+  if (!response.ok) {
+    try {
+      const errorData = await response.json();
+      if (errorData.detail) {
+        const errors = Array.isArray(errorData.detail)
+          ? errorData.detail
+          : [errorData.detail];
+        const error = new Error("Validation error");
+        error.validationErrors = errors;
+        throw error;
+      }
+    } catch (parseError) {
+      if (parseError.validationErrors) {
+        throw parseError;
+      }
+    }
+
+    throw new Error(`Server error: ${response.status}`);
+  }
 
   return new Promise((resolve, reject) => {
     const img = new Image();
