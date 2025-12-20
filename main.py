@@ -1,4 +1,5 @@
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, Header, HTTPException
 import uvicorn
 
@@ -8,8 +9,15 @@ from config import ADMIN_API_KEY
 
 app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 techs = set()
 materials = set()
+
+
+@app.get("/")
+def root():
+    return FileResponse("static/index.html")
 
 
 @app.get("/techs")

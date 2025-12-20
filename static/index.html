@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PxBadge - Tech Badge Generator</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>PxBadge Generator</h1>
+        <p>Customizable tech icon badges.</p>
+      </header>
+
+      <div class="content">
+        <div class="form-section">
+          <h2>Customize Your Badge</h2>
+
+          <div class="form-group">
+            <label for="tech">Technology:</label>
+            <select id="tech" required>
+              <option value="">Loading...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="score">Skill Level (0-6):</label>
+            <div class="range-container">
+              <input type="range" id="score" min="0" max="6" value="3" />
+              <span id="score-value" class="value-display">3</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="scale">Size Scale (1-20):</label>
+            <div class="range-container">
+              <input type="range" id="scale" min="1" max="20" value="4" />
+              <span id="scale-value" class="value-display">4</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="material">Badge Material:</label>
+            <select id="material">
+              <option value="">Loading...</option>
+            </select>
+          </div>
+
+          <button id="generate-btn" class="btn-primary">Generate Badge</button>
+        </div>
+
+        <div class="preview-section">
+          <h2>Preview</h2>
+          <div id="preview-container" class="preview-container">
+            <p class="placeholder">Configure and generate your badge</p>
+          </div>
+
+          <div id="url-section" class="url-section hidden">
+            <h3>Badge URL</h3>
+            <div class="url-container">
+              <input type="text" id="badge-url" readonly />
+              <button id="copy-btn" class="btn-secondary">Copy</button>
+            </div>
+            <p class="markdown-hint">
+              Markdown: <code id="markdown-code"></code>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/static/main.js"></script>
+  </body>
+</html>
