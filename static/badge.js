@@ -1,6 +1,52 @@
 import { API_BASE } from "./config.js";
 
 /**
+ * Create a badge generation handler
+ * @param {Object} elements - DOM elements needed for badge generation
+ * @returns {Function} Handler function for generating badges
+ */
+export const createBadgeGenerator = (elements) => {
+  const {
+    techSelect,
+    scoreInput,
+    scaleInput,
+    materialSelect,
+    previewContainer,
+    urlSection,
+    badgeUrlInput,
+    markdownCode,
+  } = elements;
+
+  return async () => {
+    const tech = techSelect.value;
+    const score = scoreInput.value;
+    const scale = scaleInput.value;
+    const material = materialSelect.value;
+
+    if (!tech) {
+      previewContainer.innerHTML =
+        '<p class="placeholder">Select a technology to generate your badge</p>';
+      urlSection.classList.add("hidden");
+      return;
+    }
+
+    try {
+      await generateBadge(
+        { tech, score, scale, material },
+        previewContainer,
+        urlSection,
+        badgeUrlInput,
+        markdownCode,
+      );
+    } catch (error) {
+      console.error("Error generating badge:", error);
+      previewContainer.innerHTML =
+        '<p class="error">Error generating badge. Please try again.</p>';
+    }
+  };
+};
+
+/**
  * Generate and display a badge
  * @param {Object} params - Badge parameters
  * @param {string} params.tech - Technology name
