@@ -54,10 +54,20 @@ export const showNotification = (message, type = "info", duration = 3000) => {
  * @param {Function} onChange - Optional callback function to call when value changes
  */
 export const initRangeSlider = (slider, valueDisplay, onChange) => {
+  const updateFill = () => {
+    const min = parseFloat(slider.min) || 0;
+    const max = parseFloat(slider.max) || 100;
+    const value = parseFloat(slider.value);
+    const percentage = ((value - min) / (max - min)) * 100;
+    slider.style.setProperty("--range-progress", `${percentage}%`);
+  };
+
   valueDisplay.textContent = slider.value;
+  updateFill();
 
   slider.addEventListener("input", () => {
     valueDisplay.textContent = slider.value;
+    updateFill();
     onChange?.();
   });
 };
