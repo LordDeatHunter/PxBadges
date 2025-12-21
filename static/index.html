@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
+    <button
+      class="theme-toggle"
+      id="theme-toggle"
+      aria-label="Toggle dark mode"
+    >
+      <span id="theme-icon">🌙</span>
+    </button>
+
+    <div class="notification-container"></div>
+
     <div class="container">
       <header>
         <h1>PxBadge Generator</h1>
@@ -70,8 +80,7 @@
       </div>
     </div>
 
-    <div class="notification-container"></div>
-
+    <script type="module" src="/static/theme.js"></script>
     <script type="module" src="/static/main.js"></script>
   </body>
 </html>
