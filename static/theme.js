@@ -2,8 +2,8 @@ import { $ } from "./config.js";
 
 const THEMES = ["light", "dark", "system"];
 const THEME_ICONS = {
-  light: "🌙",
-  dark: "☀️",
+  light: "☀️",
+  dark: "🌙",
   system: "💻",
 };
 
