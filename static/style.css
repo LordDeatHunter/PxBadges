@@ -438,6 +438,39 @@ input[type="range"]::-moz-range-thumb:active {
   }
 }
 
+footer {
+  width: 100%;
+  margin-top: auto;
+  text-align: center;
+  padding: 32px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.logo {
+  perspective: 600px;
+  cursor: pointer;
+}
+
+.logo span {
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+a.logo {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+a.logo:hover {
+  color: var(--primary-light);
+  transform: scale(1.2);
+}
+
 .notification-container {
   position: fixed;
   top: 20px;
