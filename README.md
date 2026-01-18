@@ -11,6 +11,7 @@ API for generating pixel art badges from various technologies, including but not
 These are pre-generated examples, based on the technologies used to create PxBadges itself, saved in the repo in case there are no running instances of the API.
 
 ![Python](github/python.png)
+![Fastapi](github/fastapi.png)
 ![JavaScript](github/javascript.png)
 ![CSS](github/css.png)
 ![HTML](github/html.png)
