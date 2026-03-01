@@ -1,3 +1,4 @@
+import logging
 import threading
 from contextlib import asynccontextmanager
 
@@ -11,10 +12,16 @@ from image_generator import generate_badge
 from utils import load_materials, load_techs
 
 stop_event = threading.Event()
+logger = logging.getLogger("uvicorn")
+
+
+def log(message: str):
+    logger.info(f"[PxBadge] {message}")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    log("Starting app: loading techs and materials")
     _reload_lists()
 
     refresh_thread = threading.Thread(
@@ -26,6 +33,7 @@ async def lifespan(app: FastAPI):
     try:
         yield
     finally:
+        log("Shutting down app: stopping refresh worker")
         stop_event.set()
         refresh_thread.join(timeout=2)
 
@@ -63,9 +71,13 @@ def _refresh_worker(stop_signal: threading.Event):
         if stop_signal.is_set():
             break
         try:
-            _reload_lists()
+            counts = _reload_lists()
+            log(
+                f"Refreshed lists: +{counts['new_techs']} techs, +{counts['new_materials']} materials"
+            )
         except Exception:
             # Keep the refresh loop alive even if a reload fails.
+            logger.exception("[PxBadge] Failed to refresh lists")
             continue
 
 
@@ -125,6 +137,9 @@ def reload(api_key: str = Header(..., alias="X-API-Key")):
         raise HTTPException(status_code=403, detail="Invalid API key")
 
     counts = _reload_lists()
+    log(
+        f"Manual reload: +{counts['new_techs']} techs, +{counts['new_materials']} materials"
+    )
 
     return {
         "message": "Reloaded successfully",
