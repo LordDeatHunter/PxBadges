@@ -135,8 +135,7 @@ label {
   letter-spacing: 0.01em;
 }
 
-input[type="text"],
-select {
+input[type="text"] {
   width: 100%;
   padding: 14px 16px;
   border: 2px solid var(--border-color);
@@ -147,16 +146,64 @@ select {
   color: var(--text-dark);
 }
 
-input[type="text"]:focus,
-select:focus {
+input[type="text"]:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-input[type="text"]:hover,
-select:hover {
+input[type="text"]:hover {
   border-color: var(--primary-light);
+}
+
+.autocomplete {
+  position: relative;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  max-height: 260px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-xl);
+}
+
+.autocomplete-list.hidden {
+  display: none;
+}
+
+.autocomplete-option,
+.autocomplete-empty {
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--text-dark);
+}
+
+.autocomplete-option {
+  cursor: pointer;
+}
+
+.autocomplete-option:hover,
+.autocomplete-option.active {
+  background: rgba(99, 102, 241, 0.18);
+  color: var(--primary-color);
+}
+
+.autocomplete-empty {
+  opacity: 0.7;
+}
+
+.autocomplete input.error {
+  border-color: #ef4444;
 }
 
 .range-container {

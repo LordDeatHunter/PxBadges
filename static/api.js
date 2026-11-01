@@ -1,9 +1,14 @@
-import { $c, API_BASE } from "./config.js";
+import { API_BASE } from "./config.js";
 import { showNotification } from "./ui.js";
+
+const toOption = (value) => ({
+  value,
+  label: value.charAt(0).toUpperCase() + value.slice(1),
+});
 
 /**
  * Load available technologies from the API
- * @param {HTMLSelectElement} techSelect - The technology select element
+ * @param {ReturnType<typeof import("./autocomplete.js").createAutocomplete>} techSelect - The technology autocomplete
  */
 export const loadTechs = async (techSelect) => {
   try {
@@ -19,18 +24,11 @@ export const loadTechs = async (techSelect) => {
       throw new Error("Invalid response format from server");
     }
 
-    techSelect.innerHTML = '<option value="">Select a technology...</option>';
-    data.techs.forEach((tech) => {
-      const option = $c`option`;
-      option.value = tech;
-      option.textContent = tech.charAt(0).toUpperCase() + tech.slice(1);
-      techSelect.appendChild(option);
-    });
-    techSelect.children[0].selected = true;
+    techSelect.setOptions(data.techs.map(toOption));
+    techSelect.setPlaceholder("Search for a technology...");
   } catch (error) {
     console.error("Error loading technologies:", error);
-    techSelect.innerHTML =
-      '<option value="">Error loading technologies</option>';
+    techSelect.setError("Error loading technologies");
     showNotification(
       "Failed to load technologies. Please refresh the page.",
       "error",
@@ -41,7 +39,7 @@ export const loadTechs = async (techSelect) => {
 
 /**
  * Load available materials from the API
- * @param {HTMLSelectElement} materialSelect - The material select element
+ * @param {ReturnType<typeof import("./autocomplete.js").createAutocomplete>} materialSelect - The material autocomplete
  */
 export const loadMaterials = async (materialSelect) => {
   try {
@@ -57,18 +55,12 @@ export const loadMaterials = async (materialSelect) => {
       throw new Error("Invalid response format from server");
     }
 
-    materialSelect.innerHTML = "";
-    data.materials.forEach((material) => {
-      const option = $c`option`;
-      option.value = material;
-      option.textContent = material.charAt(0).toUpperCase() + material.slice(1);
-      materialSelect.appendChild(option);
-    });
-    materialSelect.children[0].selected = true;
+    materialSelect.setOptions(data.materials.map(toOption));
+    materialSelect.setPlaceholder("Search for a material...");
+    if (data.materials.length) materialSelect.value = data.materials[0];
   } catch (error) {
     console.error("Error loading materials:", error);
-    materialSelect.innerHTML =
-      '<option value="">Error loading materials</option>';
+    materialSelect.setError("Error loading materials");
     showNotification(
       "Failed to load materials. Please refresh the page.",
       "error",

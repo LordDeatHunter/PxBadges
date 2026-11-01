@@ -2,13 +2,20 @@ import { $ } from "./config.js";
 import { loadTechs, loadMaterials } from "./api.js";
 import { initRangeSlider, debounce } from "./ui.js";
 import { createBadgeGenerator, copyToClipboard } from "./badge.js";
+import { createAutocomplete } from "./autocomplete.js";
 
-const techSelect = $("tech");
+const techRoot = $("tech");
+const techSelect = createAutocomplete(techRoot, {
+  placeholder: "Loading...",
+});
 const scoreInput = $("score");
 const scoreValue = $("score-value");
 const scaleInput = $("scale");
 const scaleValue = $("scale-value");
-const materialSelect = $("material");
+const materialRoot = $("material");
+const materialSelect = createAutocomplete(materialRoot, {
+  placeholder: "Loading...",
+});
 const previewContainer = $("preview-container");
 const urlSection = $("url-section");
 const badgeUrlInput = $("badge-url");
@@ -49,8 +56,8 @@ const handleCopy = async () => {
   }
 };
 
-techSelect.addEventListener("change", handleGenerate);
-materialSelect.addEventListener("change", handleGenerate);
+techRoot.addEventListener("change", handleGenerate);
+materialRoot.addEventListener("change", handleGenerate);
 copyBtn.addEventListener("click", handleCopy);
 
 initSliders();
